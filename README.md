@@ -11,7 +11,6 @@ you want to hide and the output image with it's format (for example "output.png"
 from. Then this program will find the difference between the two pirctures and will show you the hidden image.
 
 How does this works?
-
 Some good videos that explains everything about "Steganography": 
 
 https://www.youtube.com/watch?v=_8wAUdKF9Yk ,
