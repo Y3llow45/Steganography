@@ -25,6 +25,8 @@ Enter original image name: original.png
 
 Type H for Hide/R for Read: R
 
+Enter second image name and format: output.png
+
 Reading...
 
 Binary Message is: 00110001 00110010 00110011 00110100
