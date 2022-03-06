@@ -4,9 +4,9 @@ import math
 
 fileName = input("Enter original image name: ")
 image = Image.open(fileName)
-type = input("Type E for Encrypt/D for Decrypt: ")
-if type == "E":
-    message = input("Enter message to enrypt: ")
+type = input("Type H for Hide/R for Read: ")
+if type == "H":
+    message = input("Enter message to hide: ")
     res = ''.join(format(ord(i), '08b') for i in message)
     counter = 0;
     for c in res:
@@ -17,7 +17,7 @@ if type == "E":
         if os.path.isfile(outputName):
             print ("File allready exist!!!")
         else:
-            print("Encrypting...")
+            print("Hidding...")
             pixelMap = image.load()
             row = 0
             column = 0
@@ -64,7 +64,7 @@ if type == "E":
 else:
     messageImage = input("Enter second image name and format: ")
     if os.path.isfile(messageImage):
-        print ("Decrypting...")
+        print ("Reading...")
         secondImage = Image.open(messageImage)
         secondMap = secondImage.load()
         firstMap = image.load()
@@ -113,5 +113,3 @@ else:
             ascii_character = chr(an_integer)
             ascii_string += ascii_character
         print(ascii_string)
-
-print("YEY")
