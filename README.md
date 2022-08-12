@@ -1,6 +1,4 @@
 # Hide message in image
-### You will need:
-Python3 🐍
 
 Pillow, install it with: __pip install Pillow__ 
 #
@@ -12,13 +10,7 @@ from (this program will find the difference between the two images and will show
 #
 ### More information
 How does this work?
-Some good videos that explain everything about "Steganography": 
-
-https://www.youtube.com/watch?v=_8wAUdKF9Yk ,
-
-https://www.youtube.com/watch?v=TWEXCYQKyDc ,
-
-https://www.youtube.com/watch?v=I9WwX3EHdyY
+Steganography
 #
 ### Examples
 
