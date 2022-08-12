@@ -10,7 +10,8 @@ from (this program will find the difference between the two images and will show
 #
 ### More information
 How does this work?
-Steganography
+<br>
+Steganography!
 #
 ### Examples
 
