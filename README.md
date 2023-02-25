@@ -10,7 +10,7 @@ pip install Pillow
 
 You can hide message in image and read it using this program. First you type the original image name, then you choose between hide and read options. If you choose hide (H) just enter the message
 you want to hide and the output image with it's format (for example "output.png"). If you choose read (R) just enter the second image name that you want to read
-from (this program will find the difference between the two images and will show you the hidden message).
+from (this program will find the difference between the two images and will show you the hidden message).  
 #
 ## Examples
 ```console
