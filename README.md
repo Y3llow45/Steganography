@@ -1,18 +1,18 @@
 # Hide message in image
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
-## Installation
+## Dependencies
 ```bash
 pip install Pillow
+Python 3
 ```
-#
-## Description | Steganography
 
-You can hide message in image and read it using this program. First you type the original image name, then you choose between hide and read options. If you choose hide (H) just enter the message
-you want to hide and the output image with it's format (for example "output.png"). If you choose read (R) just enter the second image name that you want to read
-from (this program will find the difference between the two images and will show you the hidden message).  
-#
-## Examples
+## Description
+
+The program can hide a message in an image by altering the RGB values of pixels in a specific way, or read a hidden message from an image. The message is converted to binary and split into 8-bit chunks, and then each bit is embedded in the least significant bit of the RGB values of the pixels. 
+
+## Usage
+To use the program, run the code and choose whether to hide or read a message. If hiding a message, enter the name of the original image and the message to be hidden. The program will output a new image with the message embedded in it. If reading a message, enter the name of the image containing the hidden message. The program will output the hidden message.
+
+## Example
 ```console
 
 Enter original image name: original.png
