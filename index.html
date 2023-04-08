@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Steganography</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #button-container {
+                display: flex;
+                width: 100%;
+                height: 100hv;
+            }
+            button {
+                width: 400px;
+                height: 300px;
+                flex-basis: 50%;
+                font-size: 2em;
+                border: none;
+                color: white;
+                outline: none;
+                cursor: pointer;
+            }
+            #read {
+                background-color: green;
+            }
+            #hide {
+                background-color: red;
+            }
+            p {
+                display: none;
+                font-size: 2em;
+                margin: 0;
+                padding: 1em;
+            }
+    </style>
+    </head>
+    <body>
+        <div id="button-container">
+            <button id="read">Read</button>
+            <button id="hide">Hide</button>
+        </div>
+        <p id="text">This is some example text.</p>
+        <script>
+            const readBtn = document.getElementById("read");
+            const hideBtn = document.getElementById("hide");
+            const text = document.getElementById("text");
+
+            readBtn.addEventListener("click", () => {
+              text.style.display = "block";
+            });
+
+            hideBtn.addEventListener("click", () => {
+              text.style.display = "none";
+            });
+        </script>
+    </body>
+</html>
