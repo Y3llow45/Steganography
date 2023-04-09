@@ -9,12 +9,10 @@
             }
             #button-container {
                 display: flex;
-                width: 100%;
-                height: 100hv;
             }
-            button {
-                width: 400px;
-                height: 300px;
+            .big-button {
+                width: 200px;
+                height: 200px;
                 flex-basis: 50%;
                 font-size: 2em;
                 border: none;
@@ -34,25 +32,46 @@
                 margin: 0;
                 padding: 1em;
             }
+            #text {
+                padding: 0;
+            }
+            #upload {
+                background-color: #4CAF50;
+                border-radius: 1px;
+                border: none;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+              }
+              
+            #upload:hover {
+                background-color: #3e8e41;
+            }
     </style>
     </head>
     <body>
         <div id="button-container">
-            <button id="read">Read</button>
-            <button id="hide">Hide</button>
+            <button id="read" class="big-button">Read</button>
+            <button id="hide" class="big-button">Hide</button>
         </div>
-        <p id="text">This is some example text.</p>
+        <p id="text">Upload original image <input type="file" id="file-input"></p>
+        <script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
         <script>
             const readBtn = document.getElementById("read");
             const hideBtn = document.getElementById("hide");
             const text = document.getElementById("text");
+            const fileInput = document.getElementById('file-input');
 
             readBtn.addEventListener("click", () => {
-              text.style.display = "block";
+                text.style.display = "block";
             });
 
             hideBtn.addEventListener("click", () => {
-              text.style.display = "none";
+                text.style.display = "none";
+            });
+
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
             });
         </script>
     </body>
