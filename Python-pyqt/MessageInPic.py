@@ -1,6 +1,26 @@
 from PIL import Image
 import os.path
 import math
+import argparse
+
+
+def main(port, mode):
+    # Your script code goes here
+    print(f"Running with port {port} and mode {mode}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Your tool description')
+    parser.add_argument('-p', '--port', type=int, help='Port number')
+    parser.add_argument('-m', '--mode', type=int, help='Mode')
+
+    args = parser.parse_args()
+
+    if args.port is None or args.mode is None:
+        parser.print_help()
+    else:
+        main(args.port, args.mode)
+
 
 fileName = input("Enter original image name: ")
 image = Image.open(fileName)
@@ -8,14 +28,14 @@ type = input("Type H for Hide/R for Read: ")
 if type == "H":
     message = input("Enter message to hide: ")
     res = ''.join(format(ord(i), '08b') for i in message)
-    counter = 0;
+    counter = 0
     for c in res:
-        counter+=1
+        counter += 1
     if image.size[0]*image.size[1] > counter:
         print("Message can fit in the image!")
         outputName = input("Enter output name and format: ")
         if os.path.isfile(outputName):
-            print ("File allready exist!!!")
+            print("File allready exist!!!")
         else:
             print("Hidding...")
             pixelMap = image.load()
@@ -25,73 +45,85 @@ if type == "H":
                 if i == 0 and res[i] == "1":
                     pixel = pixelMap[row, column]
                     if(pixel[0] == 0 and pixel[1] == 0):
-                        pixelMap[row, column] = (pixel[0]+1, pixel[1]+1, pixel[2])
+                        pixelMap[row, column] = (
+                            pixel[0]+1, pixel[1]+1, pixel[2])
                     elif(pixel[0] == 250 and pixel[1] == 250):
-                        pixelMap[row, column] = (pixel[0]-1, pixel[1]-1, pixel[2])
+                        pixelMap[row, column] = (
+                            pixel[0]-1, pixel[1]-1, pixel[2])
                     elif(pixel[0] == 0):
-                        pixelMap[row, column] = (pixel[0]+1, pixel[1]-1, pixel[2])
+                        pixelMap[row, column] = (
+                            pixel[0]+1, pixel[1]-1, pixel[2])
                     elif(pixel[1] == 0):
-                        pixelMap[row, column] = (pixel[0]-1, pixel[1]+1, pixel[2])
+                        pixelMap[row, column] = (
+                            pixel[0]-1, pixel[1]+1, pixel[2])
                     elif(pixel[0] == 250):
-                        pixelMap[row, column] = (pixel[0]-1, pixel[1]+1, pixel[2])
+                        pixelMap[row, column] = (
+                            pixel[0]-1, pixel[1]+1, pixel[2])
                     elif(pixel[1] == 250):
-                        pixelMap[row, column] = (pixel[0]+1, pixel[1]-1, pixel[2])
+                        pixelMap[row, column] = (
+                            pixel[0]+1, pixel[1]-1, pixel[2])
                 else:
                     if(i != 0):
                         if row == image.size[0]-1:
-                            row = 0;
+                            row = 0
                             column = column+1
                         else:
                             row = row+1
                         if res[i] == "1":
                             pixel = pixelMap[row, column]
                             if(pixel[0] == 0 and pixel[1] == 0):
-                                pixelMap[row, column] = (pixel[0]+1, pixel[1]+1, pixel[2])
+                                pixelMap[row, column] = (
+                                    pixel[0]+1, pixel[1]+1, pixel[2])
                             elif(pixel[0] == 250 and pixel[1] == 250):
-                                pixelMap[row, column] = (pixel[0]-1, pixel[1]-1, pixel[2])
+                                pixelMap[row, column] = (
+                                    pixel[0]-1, pixel[1]-1, pixel[2])
                             elif(pixel[0] == 0):
-                                pixelMap[row, column] = (pixel[0]+1, pixel[1]-1, pixel[2])
+                                pixelMap[row, column] = (
+                                    pixel[0]+1, pixel[1]-1, pixel[2])
                             elif(pixel[1] == 0):
-                                pixelMap[row, column] = (pixel[0]-1, pixel[1]+1, pixel[2])
+                                pixelMap[row, column] = (
+                                    pixel[0]-1, pixel[1]+1, pixel[2])
                             elif(pixel[0] == 250):
-                                pixelMap[row, column] = (pixel[0]-1, pixel[1]+1, pixel[2])
+                                pixelMap[row, column] = (
+                                    pixel[0]-1, pixel[1]+1, pixel[2])
                             elif(pixel[1] == 250):
-                                pixelMap[row, column] = (pixel[0]+1, pixel[1]-1, pixel[2])
+                                pixelMap[row, column] = (
+                                    pixel[0]+1, pixel[1]-1, pixel[2])
             image.show()
-            image = image.save(outputName); 
+            image = image.save(outputName)
     else:
         print("Message is too big!")
 else:
     messageImage = input("Enter second image name and format: ")
     if os.path.isfile(messageImage):
-        print ("Reading...")
+        print("Reading...")
         secondImage = Image.open(messageImage)
         secondMap = secondImage.load()
         firstMap = image.load()
         row = 0
         column = 0
-        binaryMessage = "";
-        counterEnd = 0;
+        binaryMessage = ""
+        counterEnd = 0
         if image.size[0] == secondImage.size[0] and image.size[1] == secondImage.size[1]:
             for i in range(image.size[0]*image.size[1]):
                 pixel = firstMap[row, column]
                 pixel2 = secondMap[row, column]
                 if(pixel[0] == pixel2[0] and pixel[1] == pixel2[1] and pixel[2] == pixel2[2]):
-                    binaryMessage+="0"
+                    binaryMessage += "0"
                     counterEnd = counterEnd+1
                 else:
-                    binaryMessage+="1"
+                    binaryMessage += "1"
                     counterEnd = 0
                 if counterEnd == 8:
-                    break;
+                    break
                 else:
                     if row == image.size[0]-1:
-                        row = 0;
+                        row = 0
                         column = column+1
                     else:
                         row = row+1
         print("Binary Message is: "+binaryMessage)
-        #n = int(binaryMessage, 2) uncomment this if something isn't working right
+        # n = int(binaryMessage, 2) uncomment this if something isn't working right
         num = len(binaryMessage)/8
         if num.is_integer():
             binaryMessage = binaryMessage.rstrip(binaryMessage[-8])
@@ -109,9 +141,9 @@ else:
                 count = 0
         binary_values = MessageWithSpace.split()
         ascii_string = ""
-        for binary_value in binary_values:      
+        for binary_value in binary_values:
             an_integer = int(binary_value, 2)
             ascii_character = chr(an_integer)
             ascii_string += ascii_character
         print(ascii_string)
-        #print(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode())  uncomment this if something isn't working right
+        # print(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode())  uncomment this if something isn't working right

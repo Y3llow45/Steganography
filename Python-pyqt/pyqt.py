@@ -9,7 +9,8 @@ class SteganographyApp(QMainWindow):
         super().__init__()
         self.setWindowTitle("Steganography")
         self.setGeometry(100, 100, 500, 500)
-
+        self.oi = False
+        self.si = False
         self.style = "background-color: #3c3c3c; color: #ffffff; font: bold 10pt Helvetica;"
         self.setStyleSheet(self.style)
 
@@ -62,7 +63,9 @@ class SteganographyApp(QMainWindow):
             100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         if pixmap.isNull():
             self.label.setText("Upload an image!")
+            self.oi = False
             return
+        self.oi = True
         self.label.setPixmap(pixmap)
 
     def select_second_image(self):
@@ -71,7 +74,9 @@ class SteganographyApp(QMainWindow):
             100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         if pixmap.isNull():
             self.label2.setText("Upload an image!")
+            self.si = False
             return
+        self.si = True
         self.label2.setPixmap(pixmap)
 
     def hide_message(self):
@@ -79,8 +84,13 @@ class SteganographyApp(QMainWindow):
         pass
 
     def read_message(self):
-        # Code to read message from image goes here
-        pass
+        if(self.oi == False):
+            self.label.setText("Upload an image!")
+            return
+        if(self.si == False):
+            self.label2.setText("Upload an image!")
+            return
+        # run from MIP
 
 
 if __name__ == "__main__":
