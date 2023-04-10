@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import ttk
 from tkinter import filedialog
 from PIL import ImageTk, Image
 
@@ -37,13 +36,6 @@ root.title("Steganography")
 root.geometry("500x500")
 
 
-style = ttk.Style()
-style.configure('Custom.TButton', background='#3c3c3c',
-                foreground='#ffffff', font=('Helvetica', 10, 'bold'))
-style.configure('TButton', style='Custom.TButton')
-style.theme_use('custom_theme')
-
-
 mode_label = Label(text="Select mode:")
 mode_label.grid(row=0, column=1)
 
@@ -56,8 +48,8 @@ hide_button.grid(row=0, column=2, padx=5)
 read_button = Radiobutton(text="Read message", variable=mode_var, value="read")
 read_button.grid(row=0, column=3)
 
-button_select = ttk.Button(
-    text="Select image", command=select_image, style='Custom.TButton')
+button_select = Button(
+    text="Select image", command=select_image)
 button_select.grid(row=1, column=0, pady=5)
 
 
