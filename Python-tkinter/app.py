@@ -6,7 +6,7 @@ from PIL import ImageTk, Image
 def select_image():
     file_path = filedialog.askopenfilename()
     img = Image.open(file_path)
-    img = img.resize((250, 250), Image.ANTIALIAS)
+    img = img.resize((180, 180), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
     label = Label(image=img)
     label.image = img
@@ -34,7 +34,7 @@ mode_label = Label(text="Select mode:")
 mode_label.grid(row=0, column=1)
 
 mode_var = StringVar()
-mode_var.set("hide")
+mode_var.set("read")
 
 hide_button = Radiobutton(text="Hide message", variable=mode_var, value="hide")
 hide_button.grid(row=0, column=2, padx=5)
