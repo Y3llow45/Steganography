@@ -2,17 +2,20 @@ from PIL import Image
 import os.path
 import math
 import argparse
+import sys
 
 
 def main(mode, original, second, message, output):
     print(f"Running {mode} mode.")
+    print(original, second, message, output)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Steganography')
-    parser.add_argument('-m', '--mode', type=str, help='(R)Read and (H)Hide')
+    parser.add_argument('-m', '--mode', type=str,
+                        help='(R)Read and (H)Hide', required=True)
     parser.add_argument('-oimg', '--original', type=str,
-                        help='name and format of the original image')
+                        help='name and format of the original image', required=True)
     parser.add_argument('-simg', '--second', type=str,
                         help='name and format of the second image')
     parser.add_argument('-msg', '--message', type=str, help='message to hide')
@@ -21,12 +24,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.mode is None:
-        parser.print_help()
+    if args.mode != "H" and args.mode != "R":
+        print("Mode doesn't exist. Use -m R or -m H")
     elif args.mode == "H" and (args.original is None or args.message is None or args.output is None):
-        print("Specify (-oimg)original image+format, (-msg)message to hide and (-out)output image+format")
-    elif args.mode == "R":
-        print("Specify (-oimg)original image+format and (-simg)second image+format")
+        print(
+            "Specify (-oimg) original image, (-msg) message to hide and (-out) output image")
+    elif args.mode == "R" and (args.original is None or args.second is None):
+        print("Specify (-oimg) original image and (-simg) second image")
     else:
         main(args.mode, args.original, args.second, args.message, args.output)
 
