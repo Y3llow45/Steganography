@@ -123,7 +123,7 @@ else:
                     else:
                         row = row+1
         print("Binary Message is: "+binaryMessage)
-        # n = int(binaryMessage, 2) uncomment this if something isn't working right
+        n = int(binaryMessage, 2)
         num = len(binaryMessage)/8
         if num.is_integer():
             binaryMessage = binaryMessage.rstrip(binaryMessage[-8])
@@ -146,4 +146,4 @@ else:
             ascii_character = chr(an_integer)
             ascii_string += ascii_character
         print(ascii_string)
-        # print(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode())  uncomment this if something isn't working right
+        print(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode())
