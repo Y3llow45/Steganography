@@ -1,9 +1,9 @@
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QMessageBox, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton
-from hideRead import solve
+from PySide6.QtWidgets import QMessageBox, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton, QCheckBox
 from time import gmtime, strftime
+from hideRead import solve
 
 # Show/hide buttons on mode change
 # Run hide script
@@ -11,22 +11,12 @@ from time import gmtime, strftime
 # Organize files and build
 
 
-def question(msg):
-    msgBox = QMessageBox()
-    msgBox.setWindowTitle("Warning")
-    msgBox.setIcon(QMessageBox.Warning)
-    msgBox.setText(
-        "Warning: The message contains long words that may be cut off on the screen.")
-    msgBox.setInformativeText("Do you want to save the message to a file?")
-    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-    msgBox.setDefaultButton(QMessageBox.Yes)
-    response = msgBox.exec()
-
-    if response == QMessageBox.Yes:
+def save(self, result):
+    if self.checkbox.isChecked():
         output_file = str(strftime("%Y-%m-%d-%H-%M-%S", gmtime()))
-        print(str(strftime("%Y-%m-%d-%H-%M-%S", gmtime())))
+        #print(str(strftime("%Y-%m-%d-%H-%M-%S", gmtime())))
         with open(f"{output_file}.txt", "w") as f:
-            f.write(msg)
+            f.write(result)
 
 
 class SteganographyApp(QMainWindow):
@@ -36,6 +26,8 @@ class SteganographyApp(QMainWindow):
         self.setGeometry(100, 100, 500, 500)
         self.oimg = ""
         self.simg = ""
+        self.msg = ""
+        self.out = ""
         self.oi = False
         self.si = False
         self.style = "background-color: #3c3c3c; color: #ffffff; font: bold 10pt Helvetica;"
@@ -44,42 +36,46 @@ class SteganographyApp(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        self.mode_var = "read"
         self.mode_label = QLabel("Select mode:", self)
         self.mode_label.move(10, 10)
-
-        self.mode_var = "read"
-
         self.hide_button = QRadioButton("Hide message", self)
         self.hide_button.move(100, 10)
         self.hide_button.setMinimumWidth(400)
         self.hide_button.clicked.connect(self.set_hide_mode)
-
         self.read_button = QRadioButton("Read message", self)
         self.read_button.move(250, 10)
         self.read_button.setMinimumWidth(400)
         self.read_button.setChecked(True)
         self.read_button.clicked.connect(self.set_read_mode)
 
+        self.option_label = QLabel("Select option:", self)
+        self.option_label.move(10, 50)
+        self.checkbox = QCheckBox("Save to file", self)
+        self.checkbox.move(113, 50)
+        self.checkbox.setFixedWidth(self.checkbox.fontMetrics(
+        ).boundingRect(self.checkbox.text()).width() + 41)
+
         self.select_button = QPushButton("Original image", self)
-        self.select_button.move(10, 50)
+        self.select_button.move(10, 100)
         self.select_button.clicked.connect(self.select_image)
 
         self.select_second_button = QPushButton("Second image", self)
-        self.select_second_button.move(10, 100)
+        self.select_second_button.move(10, 150)
         self.select_second_button.clicked.connect(self.select_second_image)
 
         self.read_button = QPushButton("Read message", self)
-        self.read_button.move(10, 150)
+        self.read_button.move(10, 200)
         self.read_button.clicked.connect(self.read_message)
 
         self.label = QLabel(self)
-        self.label.setGeometry(150, 50, 200, 100)
+        self.label.setGeometry(150, 100, 200, 100)
 
         self.label2 = QLabel(self)
-        self.label2.setGeometry(280, 50, 200, 100)
+        self.label2.setGeometry(280, 100, 200, 100)
 
         self.msg = QLabel(self)
-        self.msg.setGeometry(15, 180, 470, 10)
+        self.msg.setGeometry(15, 230, 470, 500)
         self.msg.setWordWrap(True)
         self.msg.setFixedHeight(200)
 
@@ -124,13 +120,10 @@ class SteganographyApp(QMainWindow):
         if(self.si == False):
             self.label2.setText("Upload an image!")
             return
-        result = solve("R", self.oimg, self.simg, "", "", "y")
-        test = result.split()
-        for word in test:
-            if len(word) > 48:
-                question(result)
+        result = solve("R", self.oimg, self.simg, "", "", "")
+        save(self, result)
         self.msg.setText(result)
-        print(result)
+        # print(result)
 
 
 if __name__ == "__main__":
