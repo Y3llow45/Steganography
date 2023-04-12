@@ -123,9 +123,12 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                 ascii_string += ascii_character
             # print(binaryMessage)
             try:
-                print(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode())
+                output = n.to_bytes((n.bit_length() + 7) // 8, 'big').decode()
+                print(output)
+                return output
             except:
                 print(ascii_string)
+                return(ascii_string)
         else:
             print('No such file or directory')
 
