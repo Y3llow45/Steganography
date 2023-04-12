@@ -156,3 +156,5 @@ if __name__ == "__main__":
     else:
         solve(args.mode, args.original, args.second,
               args.message, args.output, args.binarymsg)
+
+__all__ = ['solve']

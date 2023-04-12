@@ -2,7 +2,16 @@ import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QMessageBox, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton
+from hideRead import solve
 
+
+# File path as global variable           self.oimg and self.simg
+# Run read script
+# Handle message length properly
+# Show/hide buttons on mode change
+# Run hide script
+# Run tests
+# Organize files and build
 
 class SteganographyApp(QMainWindow):
     def __init__(self):
@@ -90,7 +99,8 @@ class SteganographyApp(QMainWindow):
         if(self.si == False):
             self.label2.setText("Upload an image!")
             return
-        # run from MIP
+        result = solve("R", )
+        print(result)
 
 
 if __name__ == "__main__":
