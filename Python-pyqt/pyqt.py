@@ -4,6 +4,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QMessageBox, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton, QCheckBox
 from time import gmtime, strftime
 from hideRead import solve
+import pyperclip
 
 # Show/hide buttons on mode change
 # Run hide script
@@ -79,6 +80,14 @@ class SteganographyApp(QMainWindow):
         self.msg.setWordWrap(True)
         self.msg.setFixedHeight(200)
 
+        self.copy = QPushButton("Copy message", self)
+        self.copy.move(10, 460)
+        self.copy.clicked.connect(self.copy_to_clipboard)
+
+
+    def copy_to_clipboard(self):
+        pyperclip.copy(self.msg.text())
+    
     def set_hide_mode(self):
         self.mode_var = "hide"
 
