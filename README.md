@@ -12,9 +12,7 @@ The program can hide a message in an image by altering the RGB values of pixels 
 ## Example
 ```console
 
-Enter original image name: original.png
-Type H for Hide/R for Read: R
-Enter second image name and format: output.png
+python hideRead.py -m R -oimg original.png -simg secrete.png -bm y
 Reading...
 Binary Message is: 00110001 00110010 00110011 00110100
 1234
