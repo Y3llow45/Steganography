@@ -3,21 +3,39 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QMessageBox, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton
 from hideRead import solve
+from time import gmtime, strftime
 
-
-# File path as global variable           self.oimg and self.simg
-# Run read script
-# Handle message length properly
 # Show/hide buttons on mode change
 # Run hide script
 # Run tests
 # Organize files and build
+
+
+def question(msg):
+    msgBox = QMessageBox()
+    msgBox.setWindowTitle("Warning")
+    msgBox.setIcon(QMessageBox.Warning)
+    msgBox.setText(
+        "Warning: The message contains long words that may be cut off on the screen.")
+    msgBox.setInformativeText("Do you want to save the message to a file?")
+    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+    msgBox.setDefaultButton(QMessageBox.Yes)
+    response = msgBox.exec()
+
+    if response == QMessageBox.Yes:
+        output_file = str(strftime("%Y-%m-%d-%H-%M-%S", gmtime()))
+        print(str(strftime("%Y-%m-%d-%H-%M-%S", gmtime())))
+        with open(f"{output_file}.txt", "w") as f:
+            f.write(msg)
+
 
 class SteganographyApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Steganography")
         self.setGeometry(100, 100, 500, 500)
+        self.oimg = ""
+        self.simg = ""
         self.oi = False
         self.si = False
         self.style = "background-color: #3c3c3c; color: #ffffff; font: bold 10pt Helvetica;"
@@ -60,6 +78,11 @@ class SteganographyApp(QMainWindow):
         self.label2 = QLabel(self)
         self.label2.setGeometry(280, 50, 200, 100)
 
+        self.msg = QLabel(self)
+        self.msg.setGeometry(15, 180, 470, 10)
+        self.msg.setWordWrap(True)
+        self.msg.setFixedHeight(200)
+
     def set_hide_mode(self):
         self.mode_var = "hide"
 
@@ -75,6 +98,7 @@ class SteganographyApp(QMainWindow):
             self.oi = False
             return
         self.oi = True
+        self.oimg = file_path
         self.label.setPixmap(pixmap)
 
     def select_second_image(self):
@@ -86,6 +110,7 @@ class SteganographyApp(QMainWindow):
             self.si = False
             return
         self.si = True
+        self.simg = file_path
         self.label2.setPixmap(pixmap)
 
     def hide_message(self):
@@ -99,7 +124,12 @@ class SteganographyApp(QMainWindow):
         if(self.si == False):
             self.label2.setText("Upload an image!")
             return
-        result = solve("R", )
+        result = solve("R", self.oimg, self.simg, "", "", "y")
+        test = result.split()
+        for word in test:
+            if len(word) > 48:
+                question(result)
+        self.msg.setText(result)
         print(result)
 
 
