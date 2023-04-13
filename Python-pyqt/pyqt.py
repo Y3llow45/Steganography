@@ -6,8 +6,7 @@ from time import gmtime, strftime
 from hideRead import solve
 import pyperclip
 
-# Show/hide buttons on mode change
-# Run hide script
+# Error handling
 # Run tests
 # Organize files and build
 
@@ -84,10 +83,10 @@ class SteganographyApp(QMainWindow):
         self.label2 = QLabel(self)
         self.label2.setGeometry(280, 100, 200, 100)
 
-        self.msg = QLabel(self)
-        self.msg.setGeometry(15, 230, 470, 500)
-        self.msg.setWordWrap(True)
-        self.msg.setFixedHeight(200)
+        self.msg_output = QLabel(self)
+        self.msg_output.setGeometry(15, 230, 470, 500)
+        self.msg_output.setWordWrap(True)
+        self.msg_output.setFixedHeight(200)
         self.copy = QPushButton("Copy message", self)
         self.copy.move(10, 460)
         self.copy.clicked.connect(self.copy_to_clipboard)
@@ -103,14 +102,13 @@ class SteganographyApp(QMainWindow):
 
     def on_message_changed(self, text):
         self.msg = str(text)
-        print(text)
 
     def on_input_changed(self, text):
         self.out = str(text)
-        print(text)
 
     def copy_to_clipboard(self):
-        pyperclip.copy(self.msg.text())
+        text = self.msg_output.text().replace('\x00', '')
+        pyperclip.copy(text)
 
     def set_hide_mode(self):
         self.mode_var = "hide"
@@ -171,7 +169,10 @@ class SteganographyApp(QMainWindow):
         self.label2.setPixmap(pixmap)
 
     def hide_message(self):
-        pass  # f
+        if(self.oi == False):
+            self.label.setText("Upload an image!")
+            return
+        solve("H", self.oimg, "", self.msg, self.out, "")
 
     def read_message(self):
         if(self.oi == False):
@@ -182,7 +183,7 @@ class SteganographyApp(QMainWindow):
             return
         result = solve("R", self.oimg, self.simg, "", "", "")
         save(self, result)
-        self.msg.setText(result)
+        self.msg_output.setText(result)
         # print(result)
 
 
