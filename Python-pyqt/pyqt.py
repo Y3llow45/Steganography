@@ -5,6 +5,8 @@ from PySide6.QtWidgets import QVBoxLayout, QLineEdit, QApplication, QMainWindow,
 from time import gmtime, strftime
 from hideRead import solve
 import pyperclip
+import os.path
+import re
 
 # Error handling
 # Run tests
@@ -30,6 +32,7 @@ class SteganographyApp(QMainWindow):
         self.out = ""
         self.oi = False
         self.si = False
+        self.pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(jpg|jpeg|png|gif|bmp)$"
         self.style = "background-color: #3c3c3c; color: #ffffff; font: bold 10pt Helvetica;"
         self.setStyleSheet(self.style)
         self.initUI()
@@ -52,10 +55,14 @@ class SteganographyApp(QMainWindow):
         self.input_label.move(10, 50)
         self.input_label.hide()
         self.input = QLineEdit(self)
+        self.input.setMinimumWidth(110)
         self.input.textChanged.connect(self.on_input_changed)
         self.input.move(110, 50)
-        self.input.setMinimumWidth(150)
         self.input.hide()
+        self.input_label_warning = QLabel("", self)
+        self.input_label_warning.move(230, 50)
+        self.input_label_warning.setMinimumWidth(240)
+        self.input_label_warning.hide()
 
         self.option_label = QLabel("Select option:", self)
         self.option_label.move(10, 50)
@@ -105,6 +112,7 @@ class SteganographyApp(QMainWindow):
 
     def on_input_changed(self, text):
         self.out = str(text)
+        self.input_label_warning.hide()
 
     def copy_to_clipboard(self):
         text = self.msg_output.text().replace('\x00', '')
@@ -126,6 +134,7 @@ class SteganographyApp(QMainWindow):
         self.input_msg.show()
         self.input_msg.show()
         self.label_msg.show()
+        self.input_label_warning.hide()
 
     def set_read_mode(self):
         self.mode_var = "read"
@@ -143,6 +152,7 @@ class SteganographyApp(QMainWindow):
         self.input_msg.hide()
         self.input_msg.hide()
         self.label_msg.hide()
+        self.input_label_warning.hide()
 
     def select_image(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open Image File")
@@ -169,8 +179,25 @@ class SteganographyApp(QMainWindow):
         self.label2.setPixmap(pixmap)
 
     def hide_message(self):
-        if(self.oi == False):
+        if self.oi == False:
             self.label.setText("Upload an image!")
+            return
+        if self.out == "":
+            self.input_label_warning.show()
+            self.input_label_warning.setText("Enter output file!")
+            return
+        if os.path.isfile(self.out):
+            self.input_label_warning.show()
+            self.input_label_warning.setText("File already exist!")
+            return
+        # .replace('\x00', '')
+        if not re.match(self.pattern, self.out):
+            self.input_label_warning.show()
+            self.input_label_warning.setText(
+                "No symbols / .jpg.jpeg.png.gif.bmp!")
+            return
+        if self.msg == "":
+            print("No message!")
             return
         solve("H", self.oimg, "", self.msg, self.out, "")
 
