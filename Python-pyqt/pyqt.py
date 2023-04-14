@@ -101,6 +101,10 @@ class SteganographyApp(QMainWindow):
         self.label_msg = QLabel("Message: ", self)
         self.label_msg.move(15, 200)
         self.label_msg.hide()
+        self.label_msg_warning = QLabel("Message is reqired!", self)
+        self.label_msg_warning.move(85, 200)
+        self.label_msg_warning.setMinimumWidth(200)
+        self.label_msg_warning.hide()
         self.input_msg = QLineEdit(self)
         self.input_msg.textChanged.connect(self.on_message_changed)
         self.input_msg.move(15, 230)
@@ -109,6 +113,7 @@ class SteganographyApp(QMainWindow):
 
     def on_message_changed(self, text):
         self.msg = str(text)
+        self.label_msg_warning.hide()
 
     def on_input_changed(self, text):
         self.out = str(text)
@@ -135,6 +140,7 @@ class SteganographyApp(QMainWindow):
         self.input_msg.show()
         self.label_msg.show()
         self.input_label_warning.hide()
+        self.label_msg_warning.hide()
 
     def set_read_mode(self):
         self.mode_var = "read"
@@ -153,6 +159,7 @@ class SteganographyApp(QMainWindow):
         self.input_msg.hide()
         self.label_msg.hide()
         self.input_label_warning.hide()
+        self.label_msg_warning.hide()
 
     def select_image(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open Image File")
@@ -197,7 +204,7 @@ class SteganographyApp(QMainWindow):
                 "No symbols / .jpg.jpeg.png.gif.bmp!")
             return
         if self.msg == "":
-            print("No message!")
+            self.label_msg_warning.show()
             return
         solve("H", self.oimg, "", self.msg, self.out, "")
 
