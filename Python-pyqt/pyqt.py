@@ -8,8 +8,6 @@ import pyperclip
 import os.path
 import re
 
-# Error handling
-# Run tests
 # Organize files and build
 
 
@@ -32,7 +30,7 @@ class SteganographyApp(QMainWindow):
         self.out = ""
         self.oi = False
         self.si = False
-        self.pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(jpg|jpeg|png|gif|bmp)$"
+        self.pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(png)$"
         self.style = "background-color: #3c3c3c; color: #ffffff; font: bold 10pt Helvetica;"
         self.setStyleSheet(self.style)
         self.initUI()
@@ -201,7 +199,7 @@ class SteganographyApp(QMainWindow):
         if not re.match(self.pattern, self.out):
             self.input_label_warning.show()
             self.input_label_warning.setText(
-                "No symbols / .jpg.jpeg.png.gif.bmp!")
+                "No symbols / only .png!")
             return
         if self.msg == "":
             self.label_msg_warning.show()
