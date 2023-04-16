@@ -1,20 +1,17 @@
-import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QVBoxLayout, QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton, QCheckBox
+from PySide6.QtWidgets import QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton, QCheckBox
 from time import gmtime, strftime
-from hideRead import solve
-import pyperclip
+from hideRead import solve  # here is the logic
 import os.path
+import sys
+import pyperclip
 import re
-
-# Organize files and build
 
 
 def save(self, result):
     if self.checkbox.isChecked():
         output_file = str(strftime("%Y-%m-%d-%H-%M-%S", gmtime()))
-        #print(str(strftime("%Y-%m-%d-%H-%M-%S", gmtime())))
         with open(f"{output_file}.txt", "w") as f:
             f.write(result)
 
@@ -31,8 +28,81 @@ class SteganographyApp(QMainWindow):
         self.oi = False
         self.si = False
         self.pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(png)$"
-        self.style = "background-color: #3c3c3c; color: #ffffff; font: bold 10pt Helvetica;"
+        # HEX Codes: #EDF4F2, #7C8363, #31473A
+        self.style = """
+    QWidget {
+        background-color: #EDF4F2;
+        color: #000000;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 13px;
+    }
+    QPushButton {
+        background-color: #31473A;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 3px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    QPushButton:hover {
+        background-color: #31473A;
+    }
+    QLabel {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    QRadioButton {
+        font-family: 'Montserrat', sans-serif;
+        border-radius: 3px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    QLineEdit {
+        background-color: #FFFFFF;
+        border: 1px solid #7C8363;
+        border-radius: 3px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    QRadioButton::indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        border: 1px solid #31473A;
+    }
+    QRadioButton::indicator:checked {
+        background-color: #7C8363;
+        border: 1px solid #676d52;
+        border-radius: 3px;
+        border: 1px solid #31473A;
+    }
+    QCheckBox {
+        color: #000000;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    QCheckBox::indicator:hover {
+        border: 1px solid #31473A;
+    }
+    QCheckBox::indicator {
+        border: 1px solid #31473A;
+    }
+    QCheckBox::indicator::unchecked {
+        border: 1px solid #31473A;
+        border-radius: 3px;
+    }
+    QCheckBox::indicator::checked {
+        background-color: #7C8363;
+        border-radius: 3px;
+    }
+"""
+
         self.setStyleSheet(self.style)
+
         self.initUI()
 
     def initUI(self):

@@ -4,8 +4,6 @@ import math
 import argparse
 import sys
 
-#solve(args.mode, args.original, args.second, args.message, args.output)
-
 
 def solve(mode, fileName, messageImage, message, outputName, bm):
     #fileName = input("Enter original image name: ")
