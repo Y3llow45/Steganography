@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtWidgets import QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton, QCheckBox
 from time import gmtime, strftime
 from hideRead import solve  # here is the logic
@@ -28,6 +28,7 @@ class SteganographyApp(QMainWindow):
         self.oi = False
         self.si = False
         self.pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(png)$"
+        self.msgpattern = ""
         # HEX Codes: #EDF4F2, #7C8363, #31473A
         self.style = """
     QWidget {
@@ -272,6 +273,11 @@ class SteganographyApp(QMainWindow):
                 "No symbols / only .png!")
             return
         if self.msg == "":
+            self.label_msg_warning.show()
+            return
+        test_image = QImage(self.oi)
+        if(test_image.width()*test_image.height() < len(self.msg)*8):
+            # Add better error handling
             self.label_msg_warning.show()
             return
         solve("H", self.oimg, "", self.msg, self.out, "")

@@ -87,7 +87,7 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                     else:
                         binaryMessage += "1"
                         counterEnd = 0
-                    if counterEnd == 8:
+                    if counterEnd == 9:
                         break
                     else:
                         if row == image.size[0]-1:
