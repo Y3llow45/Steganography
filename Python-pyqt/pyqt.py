@@ -28,7 +28,7 @@ class SteganographyApp(QMainWindow):
         self.oi = False
         self.si = False
         self.pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(png)$"
-        self.msgpattern = ""
+        self.msgpattern = r'^[A-Za-z0-9 !@#$%^&*()_=+\-`\'"\\{}\[\]<>.,/]+$'
         # HEX Codes: #EDF4F2, #7C8363, #31473A
         self.style = """
     QWidget {
@@ -275,6 +275,8 @@ class SteganographyApp(QMainWindow):
         if self.msg == "":
             self.label_msg_warning.show()
             return
+        if not re.match(self.msgpattern, self.msg):
+            return self.label_msg_warning.show()
         test_image = QImage(self.oi)
         if(test_image.width()*test_image.height() < len(self.msg)*8):
             # Add better error handling
