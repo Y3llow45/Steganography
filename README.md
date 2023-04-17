@@ -30,7 +30,7 @@ Binary Message is: 00110001001100100011001100110100
 1234
 ```
 ## Example - graphical user interface (GUI)
-
+<img src="https://user-images.githubusercontent.com/68009977/232536759-a29bddc8-5d54-42e0-a0e8-8c1b1c106d46.png" alt="read" width="350" height="370"> <img src="https://user-images.githubusercontent.com/68009977/232536910-c96286e7-eb20-4b7b-9dd2-69967d8209bf.png" alt="hide" width="350" height="370">
 
 ## Contribute
 [Contributor Covenant](https://www.contributor-covenant.org/)
