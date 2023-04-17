@@ -202,7 +202,7 @@ class SteganographyApp(QMainWindow):
         self.select_second_button.hide()
         self.read_button.hide()
         self.label2.hide()
-        # self.msg.hide()
+        self.msg = ""
         self.copy.hide()
         self.input_label.show()
         self.input.show()
@@ -221,7 +221,7 @@ class SteganographyApp(QMainWindow):
         self.select_second_button.show()
         self.read_button.show()
         self.label2.show()
-        # self.msg.show()
+        #self.msg = ""
         self.copy.show()
         self.input_label.hide()
         self.input.hide()
@@ -280,12 +280,11 @@ class SteganographyApp(QMainWindow):
             return
         if not re.match(self.msgpattern, self.msg):
             return self.label_msg_warning.show()
-        test_image = QImage(self.oi)
-        if(test_image.width()*test_image.height() < len(self.msg)*8):
-            # Add better error handling
+        try:
+            solve("H", self.oimg, "", self.msg, self.out, "")
+        except:
             self.label_msg_warning.show()
-            return
-        solve("H", self.oimg, "", self.msg, self.out, "")
+            print("length error")
 
     def read_message(self):
         if(self.oi == False):
