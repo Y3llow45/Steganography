@@ -1,0 +1,6 @@
+PIL==9.4.0
+argparse==1.1
+PySide6==6.5.0
+pyperclip==1.8.2
+re==2.2.1
+#os, sys, time, math are all built-in modules in Python 3, so they don't need to be installed
