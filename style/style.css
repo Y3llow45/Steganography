@@ -1,0 +1,81 @@
+QWidget {
+    background-color: #EDF4F2;
+    color: #000000;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+}
+
+QPushButton {
+    background-color: #31473A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #31473A;
+}
+
+QLabel {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QRadioButton {
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QLineEdit {
+    background-color: #FFFFFF;
+    border: 1px solid #7C8363;
+    border-radius: 3px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QRadioButton::indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid #31473A;
+}
+
+QRadioButton::indicator:checked {
+    background-color: #7C8363;
+    border: 1px solid #676d52;
+    border-radius: 3px;
+    border: 1px solid #31473A;
+}
+
+QCheckBox {
+    color: #000000;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+QCheckBox::indicator:hover {
+    border: 1px solid #31473A;
+}
+
+QCheckBox::indicator {
+    border: 1px solid #31473A;
+}
+
+QCheckBox::indicator::unchecked {
+    border: 1px solid #31473A;
+    border-radius: 3px;
+}
+
+QCheckBox::indicator::checked {
+    background-color: #7C8363;
+    border-radius: 3px;
+}

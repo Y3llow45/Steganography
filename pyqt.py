@@ -1,15 +1,22 @@
+import os.path
+import sys
+import pyperclip  # copy to clipboard
+import re  # regex
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap, QImage
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton, QCheckBox
 from time import gmtime, strftime
 from hideRead import solve  # here is the logic
-import os.path
-import sys
-import pyperclip
-import re
+import config.config as config  # app config
 
-#window_title = "Steganography"
-#window_geometry = 100, 100, 500, 500
+#self.create_mode_selector()
+#self.create_option_selector()
+#self.create_input_selector()
+#self.create_image_selectors()
+#self.create_message_editor()
+#self.create_output_viewer()
+#self.create_save_button()
+
 
 
 def save(self, result):
@@ -20,93 +27,16 @@ def save(self, result):
 
 
 class SteganographyApp(QMainWindow):
-    def __init__(self):
+    def __init__(self, window_title, window_x, window_y, window_width, window_height, file_pattern, msg_pattern):
         super().__init__()
-        self.setWindowTitle("Steganography")
-        self.setGeometry(100, 100, 500, 500)
-        self.oimg = ""
-        self.simg = ""
-        self.msg = ""
-        self.out = ""
-        self.oi = False
-        self.si = False
-        self.pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(png)$"
-        self.msgpattern = r'^[A-Za-z0-9 !@#$%^&*()_=+\-`\'"\\{}\[\]<>.,/]+$'
-        # HEX Codes: #EDF4F2, #7C8363, #31473A
-        self.style = """
-    QWidget {
-        background-color: #EDF4F2;
-        color: #000000;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 13px;
-    }
-    QPushButton {
-        background-color: #31473A;
-        color: #FFFFFF;
-        border: none;
-        border-radius: 3px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    QPushButton:hover {
-        background-color: #31473A;
-    }
-    QLabel {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    QRadioButton {
-        font-family: 'Montserrat', sans-serif;
-        border-radius: 3px;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    QLineEdit {
-        background-color: #FFFFFF;
-        border: 1px solid #7C8363;
-        border-radius: 3px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    QRadioButton::indicator {
-        width: 20px;
-        height: 20px;
-        border-radius: 3px;
-        border: 1px solid #31473A;
-    }
-    QRadioButton::indicator:checked {
-        background-color: #7C8363;
-        border: 1px solid #676d52;
-        border-radius: 3px;
-        border: 1px solid #31473A;
-    }
-    QCheckBox {
-        color: #000000;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    QCheckBox::indicator:hover {
-        border: 1px solid #31473A;
-    }
-    QCheckBox::indicator {
-        border: 1px solid #31473A;
-    }
-    QCheckBox::indicator::unchecked {
-        border: 1px solid #31473A;
-        border-radius: 3px;
-    }
-    QCheckBox::indicator::checked {
-        background-color: #7C8363;
-        border-radius: 3px;
-    }
-"""
-
-        self.setStyleSheet(self.style)
-
+        self.setWindowTitle(window_title)
+        self.setGeometry(window_x, window_y, window_width, window_height)
+        self.oimg = self.simg = self.msg = self.out = ""
+        self.oi = self.si = False
+        self.file_pattern = file_pattern
+        self.msg_pattern = msg_pattern
+        with open('style/style.css', 'r') as file:
+            self.setStyleSheet(""+file.read()+"")
         self.initUI()
 
     def initUI(self):
@@ -270,7 +200,7 @@ class SteganographyApp(QMainWindow):
             self.input_label_warning.setText("File already exist!")
             return
         # .replace('\x00', '')
-        if not re.match(self.pattern, self.out):
+        if not re.match(self.file_pattern, self.out):
             self.input_label_warning.show()
             self.input_label_warning.setText(
                 "No symbols / only .png!")
@@ -278,7 +208,7 @@ class SteganographyApp(QMainWindow):
         if self.msg == "":
             self.label_msg_warning.show()
             return
-        if not re.match(self.msgpattern, self.msg):
+        if not re.match(self.msg_pattern, self.msg):
             return self.label_msg_warning.show()
         try:
             solve("H", self.oimg, "", self.msg, self.out, "")
@@ -296,11 +226,11 @@ class SteganographyApp(QMainWindow):
         result = solve("R", self.oimg, self.simg, "", "", "")
         save(self, result)
         self.msg_output.setText(result)
-        # print(result)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    steganography_app = SteganographyApp()
+    steganography_app = SteganographyApp(
+        config.window_title, config.window_x, config.window_y, config.window_width, config.window_height, config.file_pattern, config.msg_pattern)
     steganography_app.show()
     sys.exit(app.exec())
