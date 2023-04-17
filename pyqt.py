@@ -8,6 +8,9 @@ import sys
 import pyperclip
 import re
 
+#window_title = "Steganography"
+#window_geometry = 100, 100, 500, 500
+
 
 def save(self, result):
     if self.checkbox.isChecked():
