@@ -61,7 +61,8 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                 # image.show()
                 image = image.save(outputName, quality=100)
         else:
-            print('Message is too long \n Use bigger image or shorten the message')
+            #print('Message is too long \n Use bigger image or shorten the message')
+            raise ValueError("Message is too long! Use bigger image!")
     else:
         #messageImage = input("Enter second image name and format: ")
         if os.path.isfile(messageImage):

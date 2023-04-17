@@ -10,10 +10,7 @@ This Steganography tool can help anyone in hiding sensitive information within i
 1. Hide and extract sensitive information from images
 2. Modern and intuitive GUI for an enhanced user experience
 3. CLI for advanced users and automation
-4. High performance for working with large amounts of data and images, outperforming similar tools*
-5. Supports popular image format .PNG
-
-*Note: Performance comparison is based on internal testing and may vary based on system specifications and data characteristics.
+4. Supports popular image format .PNG
 
 ## Applications
 1. **Digital watermarking**: Steganography can be used to embed a digital watermark within an image or video, allowing copyright owners to **protect their intellectual property from unauthorized use or distribution**.
