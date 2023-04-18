@@ -3,7 +3,7 @@ import sys
 import re  # regex
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 from hideRead import solve  # app logic
 import config.config as config  # app config
 # Components for GUI layout and functionality:
@@ -12,8 +12,11 @@ from components.layout.option_selector import OptionSelector
 from components.layout.input_selector import InputSelector
 from components.layout.image_selector import ImageSelector
 from components.layout.message_editor import MessageEditor
-from components.functionality.save import Save
-from components.functionality.copy_to_clipboard import CopyToClipboard
+from components.functional.save import Save
+from components.functional.copy_to_clipboard import CopyToClipboard
+from components.functional.on_input_change import OnInputChange
+from components.functional.on_message_change import OnMessageChange
+from components.functional.set_hide_read_mode import SetMode
 
 
 class SteganographyApp(QMainWindow):
@@ -38,53 +41,21 @@ class SteganographyApp(QMainWindow):
         MessageEditor(self)
 
     def on_input_change(self, text):
-        self.out = str(text)
-        self.input_label_warning.hide()
+        OnInputChange(self, text)
 
     def on_message_change(self, text):
-        self.msg = str(text)
-        self.label_msg_warning.hide()
+        OnMessageChange(self, text)
 
     def copy_to_clipboard(self):
         CopyToClipboard(self)
 
     def set_hide_mode(self):
         self.mode_var = "hide"
-        self.option_label.hide()
-        self.checkbox.hide()
-        self.select_second_button.hide()
-        self.read_button.hide()
-        self.label2.hide()
-        self.msg = ""
-        self.copy.hide()
-        self.input_label.show()
-        self.input.show()
-        self.hide_button.show()
-        self.label_msg.show()
-        self.input_msg.show()
-        self.input_msg.show()
-        self.label_msg.show()
-        self.input_label_warning.hide()
-        self.label_msg_warning.hide()
+        SetMode(self, False)
 
     def set_read_mode(self):
         self.mode_var = "read"
-        self.option_label.show()
-        self.checkbox.show()
-        self.select_second_button.show()
-        self.read_button.show()
-        self.label2.show()
-        self.msg = ""
-        self.copy.show()
-        self.input_label.hide()
-        self.input.hide()
-        self.hide_button.hide()
-        self.label_msg.hide()
-        self.input_msg.hide()
-        self.input_msg.hide()
-        self.label_msg.hide()
-        self.input_label_warning.hide()
-        self.label_msg_warning.hide()
+        SetMode(self, True)
 
     def select_image(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open Image File")
@@ -122,7 +93,6 @@ class SteganographyApp(QMainWindow):
             self.input_label_warning.show()
             self.input_label_warning.setText("File already exist!")
             return
-        # .replace('\x00', '')
         if not re.match(self.file_pattern, self.out):
             self.input_label_warning.show()
             self.input_label_warning.setText(
