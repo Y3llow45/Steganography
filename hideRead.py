@@ -59,7 +59,8 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                                     pixelMap[row, column] = (
                                         pixel[0]-1, pixel[1], pixel[2])
                 # image.show()
-                image = image.save(outputName, quality=100)
+                output_name_path = os.path.join('img', outputName)
+                image = image.save(output_name_path, quality=100)
         else:
             #print('Message is too long \n Use bigger image or shorten the message')
             raise ValueError("Message is too long! Use bigger image!")

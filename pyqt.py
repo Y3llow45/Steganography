@@ -4,19 +4,17 @@ import pyperclip  # copy to clipboard
 import re  # regex
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QRadioButton, QCheckBox
+from PySide6.QtWidgets import QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog
 from time import gmtime, strftime
-from hideRead import solve  # here is the logic
+from hideRead import solve  # app logic
 import config.config as config  # app config
-
-#self.create_mode_selector()
-#self.create_option_selector()
-#self.create_input_selector()
-#self.create_image_selectors()
-#self.create_message_editor()
-#self.create_output_viewer()
-#self.create_save_button()
-
+# Components for GUI layout and functionality:
+from components.mode_selector import ModeSelector
+from components.option_selector import OptionSelector
+from components.input_selector import InputSelector
+from components.image_selector import ImageSelector
+from components.message_editor import MessageEditor
+from components.output_viewer import OutputViewer
 
 
 def save(self, result):
@@ -41,77 +39,12 @@ class SteganographyApp(QMainWindow):
 
     def initUI(self):
         self.mode_var = "read"
-        self.mode_label = QLabel("Select mode:", self)
-        self.mode_label.move(10, 10)
-        self.hide_button = QRadioButton("Hide message", self)
-        self.hide_button.move(100, 10)
-        self.hide_button.setMinimumWidth(400)
-        self.hide_button.clicked.connect(self.set_hide_mode)
-        self.read_button = QRadioButton("Read message", self)
-        self.read_button.move(250, 10)
-        self.read_button.setMinimumWidth(400)
-        self.read_button.setChecked(True)
-        self.read_button.clicked.connect(self.set_read_mode)
-
-        self.input_label = QLabel("Output image: ", self)
-        self.input_label.move(10, 50)
-        self.input_label.hide()
-        self.input = QLineEdit(self)
-        self.input.setMinimumWidth(110)
-        self.input.textChanged.connect(self.on_input_changed)
-        self.input.move(110, 50)
-        self.input.hide()
-        self.input_label_warning = QLabel("", self)
-        self.input_label_warning.move(230, 50)
-        self.input_label_warning.setMinimumWidth(240)
-        self.input_label_warning.hide()
-
-        self.option_label = QLabel("Select option:", self)
-        self.option_label.move(10, 50)
-        self.checkbox = QCheckBox("Save to file", self)
-        self.checkbox.move(113, 50)
-        self.checkbox.setFixedWidth(self.checkbox.fontMetrics(
-        ).boundingRect(self.checkbox.text()).width() + 41)
-
-        self.select_button = QPushButton("Original image", self)
-        self.select_button.move(10, 100)
-        self.select_button.clicked.connect(self.select_image)
-        self.select_second_button = QPushButton("Second image", self)
-        self.select_second_button.move(10, 150)
-        self.select_second_button.clicked.connect(self.select_second_image)
-        self.read_button = QPushButton("Read message", self)
-        self.read_button.move(10, 200)
-        self.read_button.clicked.connect(self.read_message)
-        self.hide_button = QPushButton("Hide message", self)
-        self.hide_button.move(10, 150)
-        self.hide_button.clicked.connect(self.hide_message)
-        self.hide_button.hide()
-
-        self.label = QLabel(self)
-        self.label.setGeometry(150, 100, 200, 100)
-        self.label2 = QLabel(self)
-        self.label2.setGeometry(280, 100, 200, 100)
-
-        self.msg_output = QLabel(self)
-        self.msg_output.setGeometry(15, 230, 470, 500)
-        self.msg_output.setWordWrap(True)
-        self.msg_output.setFixedHeight(200)
-        self.copy = QPushButton("Copy message", self)
-        self.copy.move(10, 460)
-        self.copy.clicked.connect(self.copy_to_clipboard)
-
-        self.label_msg = QLabel("Message: ", self)
-        self.label_msg.move(15, 200)
-        self.label_msg.hide()
-        self.label_msg_warning = QLabel("Message is reqired!", self)
-        self.label_msg_warning.move(85, 200)
-        self.label_msg_warning.setMinimumWidth(200)
-        self.label_msg_warning.hide()
-        self.input_msg = QLineEdit(self)
-        self.input_msg.textChanged.connect(self.on_message_changed)
-        self.input_msg.move(15, 230)
-        self.input_msg.setMinimumWidth(470)
-        self.input_msg.hide()
+        ModeSelector(self)
+        OptionSelector(self)
+        InputSelector(self)
+        ImageSelector(self)
+        MessageEditor(self)
+        OutputViewer(self)
 
     def on_message_changed(self, text):
         self.msg = str(text)
@@ -120,6 +53,9 @@ class SteganographyApp(QMainWindow):
     def on_input_changed(self, text):
         self.out = str(text)
         self.input_label_warning.hide()
+
+    def on_change(self, target, text):
+        self.target = str(text)
 
     def copy_to_clipboard(self):
         text = self.msg_output.text().replace('\x00', '')
@@ -151,7 +87,7 @@ class SteganographyApp(QMainWindow):
         self.select_second_button.show()
         self.read_button.show()
         self.label2.show()
-        #self.msg = ""
+        self.msg = ""
         self.copy.show()
         self.input_label.hide()
         self.input.hide()
@@ -195,7 +131,7 @@ class SteganographyApp(QMainWindow):
             self.input_label_warning.show()
             self.input_label_warning.setText("Enter output file!")
             return
-        if os.path.isfile(self.out):
+        if os.path.isfile('img/' + self.out):
             self.input_label_warning.show()
             self.input_label_warning.setText("File already exist!")
             return
