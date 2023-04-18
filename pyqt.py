@@ -1,11 +1,9 @@
 import os.path
 import sys
-import pyperclip  # copy to clipboard
 import re  # regex
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QLineEdit, QApplication, QMainWindow, QLabel, QPushButton, QFileDialog
-from time import gmtime, strftime
 from hideRead import solve  # app logic
 import config.config as config  # app config
 # Components for GUI layout and functionality:
@@ -14,14 +12,8 @@ from components.layout.option_selector import OptionSelector
 from components.layout.input_selector import InputSelector
 from components.layout.image_selector import ImageSelector
 from components.layout.message_editor import MessageEditor
-from components.layout.output_viewer import OutputViewer
-
-
-def save(self, result):
-    if self.checkbox.isChecked():
-        output_file = str(strftime("%Y-%m-%d-%H-%M-%S", gmtime()))
-        with open(f"{output_file}.txt", "w") as f:
-            f.write(result)
+from components.functionality.save import Save
+from components.functionality.copy_to_clipboard import CopyToClipboard
 
 
 class SteganographyApp(QMainWindow):
@@ -44,19 +36,17 @@ class SteganographyApp(QMainWindow):
         InputSelector(self)
         ImageSelector(self)
         MessageEditor(self)
-        OutputViewer(self)
 
-    def on_message_changed(self, text):
-        self.msg = str(text)
-        self.label_msg_warning.hide()
-
-    def on_input_changed(self, text):
+    def on_input_change(self, text):
         self.out = str(text)
         self.input_label_warning.hide()
 
+    def on_message_change(self, text):
+        self.msg = str(text)
+        self.label_msg_warning.hide()
+
     def copy_to_clipboard(self):
-        text = self.msg_output.text().replace('\x00', '')
-        pyperclip.copy(text)
+        CopyToClipboard(self)
 
     def set_hide_mode(self):
         self.mode_var = "hide"
@@ -157,7 +147,7 @@ class SteganographyApp(QMainWindow):
             self.label2.setText("Upload an image!")
             return
         result = solve("R", self.oimg, self.simg, "", "", "")
-        save(self, result)
+        Save(self, result)
         self.msg_output.setText(result)
 
 
