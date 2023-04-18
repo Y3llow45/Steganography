@@ -18,6 +18,11 @@ from components.functional.on_input_change import OnInputChange
 from components.functional.on_message_change import OnMessageChange
 from components.functional.set_hide_read_mode import SetMode
 
+#TO DO:
+#Add error handling component line 109
+#Add select_image, select_second_image, hide_message, read_message functional components
+#Run test
+#BuildS
 
 class SteganographyApp(QMainWindow):
     def __init__(self, window_title, window_x, window_y, window_width, window_height, file_pattern, msg_pattern):
@@ -106,7 +111,7 @@ class SteganographyApp(QMainWindow):
         try:
             solve("H", self.oimg, "", self.msg, self.out, "")
         except:
-            self.label_msg_warning.show()
+            self.label_msg_warning.show()     
             print("length error")
 
     def read_message(self):
