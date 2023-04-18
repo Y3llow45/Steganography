@@ -9,12 +9,12 @@ from time import gmtime, strftime
 from hideRead import solve  # app logic
 import config.config as config  # app config
 # Components for GUI layout and functionality:
-from components.mode_selector import ModeSelector
-from components.option_selector import OptionSelector
-from components.input_selector import InputSelector
-from components.image_selector import ImageSelector
-from components.message_editor import MessageEditor
-from components.output_viewer import OutputViewer
+from components.layout.mode_selector import ModeSelector
+from components.layout.option_selector import OptionSelector
+from components.layout.input_selector import InputSelector
+from components.layout.image_selector import ImageSelector
+from components.layout.message_editor import MessageEditor
+from components.layout.output_viewer import OutputViewer
 
 
 def save(self, result):
@@ -53,9 +53,6 @@ class SteganographyApp(QMainWindow):
     def on_input_changed(self, text):
         self.out = str(text)
         self.input_label_warning.hide()
-
-    def on_change(self, target, text):
-        self.target = str(text)
 
     def copy_to_clipboard(self):
         text = self.msg_output.text().replace('\x00', '')
