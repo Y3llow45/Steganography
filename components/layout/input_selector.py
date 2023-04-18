@@ -7,7 +7,7 @@ def InputSelector(self):
     self.input_label.hide()
     self.input = QLineEdit(self)
     self.input.setMinimumWidth(110)
-    self.input.textChanged.connect(self.on_input_changed)
+    self.input.textChanged.connect(self.on_input_change)
     self.input.move(110, 50)
     self.input.hide()
     self.input_label_warning = QLabel("", self)
