@@ -19,8 +19,12 @@ This Steganography tool can help anyone in hiding sensitive information within i
 3. **Covert communication**: Steganography can be used to hide communication within **social media posts, images, or videos**.This can be useful for covert communication in situations where traditional methods of communication may be **monitored or censored**.
 4. **Digital forensics**: Steganography can be used in digital forensics investigations to **detect hidden messages or files** that may be relevant to a case.
 
-## Installation
+# IMPORTANT notes
+1. Avoid using images that have a uniform color tone or pattern. If the pixels in the image are too similar, the hidden information may be detected by others.
+2. To ensure better privacy, use images captured with your own phone or camera instead of those sourced from the internet. Online images can be quickly traced using AI technologies.
+3. For maximum security, use different images for each message. Make sure these images are original, captured by you, and have not been uploaded anywhere, not even on your backup cloud. It's best to use images captured with your own camera insted of your phone unless you have taken serous privacy measures.
 
+## Installation
 ```bash
 $ pip install -r requirements.txt --no-index
 ```
