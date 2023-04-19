@@ -1,9 +1,5 @@
-import os.path
 import sys
-import re
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow
 from hideRead import solve  # app logic
 import config.config as config  # app config
 # Components for GUI layout and functionality:
@@ -18,6 +14,8 @@ from components.functional.on_input_change import OnInputChange
 from components.functional.on_message_change import OnMessageChange
 from components.functional.set_hide_read_mode import SetMode
 from components.functional.select_image import SelectImage
+from components.functional.select_second_image import SelectSecondImage
+from components.functional.hide_message import HideMessage
 
 # TO DO:
 # Add select_image, select_second_image, hide_message, read_message functional components
@@ -85,52 +83,13 @@ class SteganographyApp(QMainWindow):
         SelectImage(self, TXT_OPEN_IMAGE, ERR_UPLOAD)
 
     def select_second_image(self):
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, TXT_OPEN_SECOND_IMAGE)
-        pixmap = QPixmap(file_path).scaled(
-            100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        if pixmap.isNull():
-            self.handle_errors_and_text(self.label2, ERR_UPLOAD)
-            self.si = False
-            return
-        self.si = True
-        self.simg = file_path
-        self.label2.setPixmap(pixmap)
+        SelectSecondImage(self, TXT_OPEN_SECOND_IMAGE, ERR_UPLOAD)
 
     def hide_message(self):
-        if self.oi == False:
-            self.handle_errors_and_text(self.label, ERR_UPLOAD)
-            return
-        if self.out == "":
-            self.input_label_warning.show()
-            self.handle_errors_and_text(
-                self.input_label_warning, ERR_OUTPUT_FILE)
-            return
-        if os.path.isfile(IMAGE_DIRECTORY + self.out):
-            self.input_label_warning.show()
-            self.handle_errors_and_text(
-                self.input_label_warning, ERR_EXIST)
-            return
-        if not re.match(self.file_pattern, self.out):
-            self.input_label_warning.show()
-            self.handle_errors_and_text(
-                self.input_label_warning, ERR_INVALID_FILE)
-            return
-        if self.msg == "":
-            self.handle_errors_and_text(
-                self.label_msg_warning, ERR_MESSAGE)
-            self.label_msg_warning.show()
-            return
-        if not re.match(self.msg_pattern, self.msg):
-            self.handle_errors_and_text(
-                self.label_msg_warning, ERR_INVALID_MESSAGE)
-            return self.label_msg_warning.show()
-        try:
-            solve(HIDE_MODE, self.oimg, "", self.msg, self.out, "")
-        except:
-            self.handle_errors_and_text(
-                self.label_msg_warning, ERR_MESSAGE_LENGTH)
-            return self.label_msg_warning.show()
+        HideMessage(self, ERR_UPLOAD, ERR_OUTPUT_FILE,
+                    IMAGE_DIRECTORY, ERR_EXIST, ERR_INVALID_FILE,
+                    ERR_MESSAGE, ERR_INVALID_MESSAGE, solve,
+                    HIDE_MODE, ERR_MESSAGE_LENGTH)
 
     def read_message(self):
         if(self.oi == False):
