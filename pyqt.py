@@ -1,6 +1,6 @@
 import os.path
 import sys
-import re  # regex
+import re
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
@@ -17,12 +17,31 @@ from components.functional.copy_to_clipboard import CopyToClipboard
 from components.functional.on_input_change import OnInputChange
 from components.functional.on_message_change import OnMessageChange
 from components.functional.set_hide_read_mode import SetMode
+from components.functional.select_image import SelectImage
 
-#TO DO:
-#Add error handling component line 109
-#Add select_image, select_second_image, hide_message, read_message functional components
-#Run test
-#BuildS
+# TO DO:
+# Add select_image, select_second_image, hide_message, read_message functional components
+# Run test
+# BuildS
+
+# Do NOT change!
+READ_MODE = "R"
+HIDE_MODE = "H"
+IMAGE_DIRECTORY = 'img/'
+LINK_STYLE = 'style/style.css'
+# Errors and texts
+SET_MODE_READ = "read"
+SET_MODE_HIDE = "hide"
+TXT_OPEN_IMAGE = "Open Image File"
+TXT_OPEN_SECOND_IMAGE = "Open Second Image File"
+ERR_UPLOAD = "Upload an image!"
+ERR_OUTPUT_FILE = "Enter output file!"
+ERR_EXIST = "File already exist!"
+ERR_INVALID_FILE = "No symbols / only .png!"
+ERR_MESSAGE = "Message is reqired!"
+ERR_INVALID_MESSAGE = "Message contains illegal symbols!"
+ERR_MESSAGE_LENGTH = "Message is too long for this image!"
+
 
 class SteganographyApp(QMainWindow):
     def __init__(self, window_title, window_x, window_y, window_width, window_height, file_pattern, msg_pattern):
@@ -33,12 +52,12 @@ class SteganographyApp(QMainWindow):
         self.oi = self.si = False
         self.file_pattern = file_pattern
         self.msg_pattern = msg_pattern
-        with open('style/style.css', 'r') as file:
+        with open(LINK_STYLE, 'r') as file:
             self.setStyleSheet(""+file.read()+"")
         self.initUI()
 
     def initUI(self):
-        self.mode_var = "read"
+        self.mode_var = SET_MODE_READ
         ModeSelector(self)
         OptionSelector(self)
         InputSelector(self)
@@ -55,31 +74,23 @@ class SteganographyApp(QMainWindow):
         CopyToClipboard(self)
 
     def set_hide_mode(self):
-        self.mode_var = "hide"
+        self.mode_var = SET_MODE_HIDE
         SetMode(self, False)
 
     def set_read_mode(self):
-        self.mode_var = "read"
+        self.mode_var = SET_MODE_READ
         SetMode(self, True)
 
     def select_image(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open Image File")
-        pixmap = QPixmap(file_path).scaled(
-            100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        if pixmap.isNull():
-            self.label.setText("Upload an image!")
-            self.oi = False
-            return
-        self.oi = True
-        self.oimg = file_path
-        self.label.setPixmap(pixmap)
+        SelectImage(self, TXT_OPEN_IMAGE, ERR_UPLOAD)
 
     def select_second_image(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open Image File")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, TXT_OPEN_SECOND_IMAGE)
         pixmap = QPixmap(file_path).scaled(
             100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         if pixmap.isNull():
-            self.label2.setText("Upload an image!")
+            self.handle_errors_and_text(self.label2, ERR_UPLOAD)
             self.si = False
             return
         self.si = True
@@ -88,42 +99,52 @@ class SteganographyApp(QMainWindow):
 
     def hide_message(self):
         if self.oi == False:
-            self.label.setText("Upload an image!")
+            self.handle_errors_and_text(self.label, ERR_UPLOAD)
             return
         if self.out == "":
             self.input_label_warning.show()
-            self.input_label_warning.setText("Enter output file!")
+            self.handle_errors_and_text(
+                self.input_label_warning, ERR_OUTPUT_FILE)
             return
-        if os.path.isfile('img/' + self.out):
+        if os.path.isfile(IMAGE_DIRECTORY + self.out):
             self.input_label_warning.show()
-            self.input_label_warning.setText("File already exist!")
+            self.handle_errors_and_text(
+                self.input_label_warning, ERR_EXIST)
             return
         if not re.match(self.file_pattern, self.out):
             self.input_label_warning.show()
-            self.input_label_warning.setText(
-                "No symbols / only .png!")
+            self.handle_errors_and_text(
+                self.input_label_warning, ERR_INVALID_FILE)
             return
         if self.msg == "":
+            self.handle_errors_and_text(
+                self.label_msg_warning, ERR_MESSAGE)
             self.label_msg_warning.show()
             return
         if not re.match(self.msg_pattern, self.msg):
+            self.handle_errors_and_text(
+                self.label_msg_warning, ERR_INVALID_MESSAGE)
             return self.label_msg_warning.show()
         try:
-            solve("H", self.oimg, "", self.msg, self.out, "")
+            solve(HIDE_MODE, self.oimg, "", self.msg, self.out, "")
         except:
-            self.label_msg_warning.show()     
-            print("length error")
+            self.handle_errors_and_text(
+                self.label_msg_warning, ERR_MESSAGE_LENGTH)
+            return self.label_msg_warning.show()
 
     def read_message(self):
         if(self.oi == False):
-            self.label.setText("Upload an image!")
+            self.handle_errors_and_text(self.label, ERR_UPLOAD)
             return
         if(self.si == False):
-            self.label2.setText("Upload an image!")
+            self.handle_errors_and_text(self.label2, ERR_UPLOAD)
             return
-        result = solve("R", self.oimg, self.simg, "", "", "")
+        result = solve(READ_MODE, self.oimg, self.simg, "", "", "")
         Save(self, result)
-        self.msg_output.setText(result)
+        self.handle_errors_and_text(self.msg_output, result)
+
+    def handle_errors_and_text(self, target, error):
+        target.setText(error)
 
 
 if __name__ == "__main__":
