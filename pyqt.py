@@ -16,29 +16,7 @@ from components.functional.set_hide_read_mode import SetMode
 from components.functional.select_image import SelectImage
 from components.functional.select_second_image import SelectSecondImage
 from components.functional.hide_message import HideMessage
-
-# TO DO:
-# Add select_image, select_second_image, hide_message, read_message functional components
-# Run test
-# BuildS
-
-# Do NOT change!
-READ_MODE = "R"
-HIDE_MODE = "H"
-IMAGE_DIRECTORY = 'img/'
-LINK_STYLE = 'style/style.css'
-# Errors and texts
-SET_MODE_READ = "read"
-SET_MODE_HIDE = "hide"
-TXT_OPEN_IMAGE = "Open Image File"
-TXT_OPEN_SECOND_IMAGE = "Open Second Image File"
-ERR_UPLOAD = "Upload an image!"
-ERR_OUTPUT_FILE = "Enter output file!"
-ERR_EXIST = "File already exist!"
-ERR_INVALID_FILE = "No symbols / only .png!"
-ERR_MESSAGE = "Message is reqired!"
-ERR_INVALID_MESSAGE = "Message contains illegal symbols!"
-ERR_MESSAGE_LENGTH = "Message is too long for this image!"
+from components.functional.read_message import ReadMessage
 
 
 class SteganographyApp(QMainWindow):
@@ -50,12 +28,13 @@ class SteganographyApp(QMainWindow):
         self.oi = self.si = False
         self.file_pattern = file_pattern
         self.msg_pattern = msg_pattern
-        with open(LINK_STYLE, 'r') as file:
+        # import customizible styles
+        with open(config.LINK_STYLE, 'r') as file:
             self.setStyleSheet(""+file.read()+"")
         self.initUI()
 
     def initUI(self):
-        self.mode_var = SET_MODE_READ
+        self.mode_var = config.SET_MODE_READ
         ModeSelector(self)
         OptionSelector(self)
         InputSelector(self)
@@ -72,35 +51,27 @@ class SteganographyApp(QMainWindow):
         CopyToClipboard(self)
 
     def set_hide_mode(self):
-        self.mode_var = SET_MODE_HIDE
+        self.mode_var = config.SET_MODE_HIDE
         SetMode(self, False)
 
     def set_read_mode(self):
-        self.mode_var = SET_MODE_READ
+        self.mode_var = config.SET_MODE_READ
         SetMode(self, True)
 
     def select_image(self):
-        SelectImage(self, TXT_OPEN_IMAGE, ERR_UPLOAD)
+        SelectImage(self, config.TXT_OPEN_IMAGE, config.ERR_UPLOAD)
 
     def select_second_image(self):
-        SelectSecondImage(self, TXT_OPEN_SECOND_IMAGE, ERR_UPLOAD)
+        SelectSecondImage(self, config.TXT_OPEN_SECOND_IMAGE, config.ERR_UPLOAD)
 
     def hide_message(self):
-        HideMessage(self, ERR_UPLOAD, ERR_OUTPUT_FILE,
-                    IMAGE_DIRECTORY, ERR_EXIST, ERR_INVALID_FILE,
-                    ERR_MESSAGE, ERR_INVALID_MESSAGE, solve,
-                    HIDE_MODE, ERR_MESSAGE_LENGTH)
+        HideMessage(self, config.ERR_UPLOAD, config.ERR_OUTPUT_FILE,
+                    config.IMAGE_DIRECTORY, config.ERR_EXIST, config.ERR_INVALID_FILE,
+                    config.ERR_MESSAGE, config.ERR_INVALID_MESSAGE, solve,
+                    config.HIDE_MODE, config.ERR_MESSAGE_LENGTH)
 
     def read_message(self):
-        if(self.oi == False):
-            self.handle_errors_and_text(self.label, ERR_UPLOAD)
-            return
-        if(self.si == False):
-            self.handle_errors_and_text(self.label2, ERR_UPLOAD)
-            return
-        result = solve(READ_MODE, self.oimg, self.simg, "", "", "")
-        Save(self, result)
-        self.handle_errors_and_text(self.msg_output, result)
+        ReadMessage(self, config.ERR_UPLOAD, solve, config.READ_MODE, Save)
 
     def handle_errors_and_text(self, target, error):
         target.setText(error)

@@ -4,9 +4,10 @@ import math
 import argparse
 import sys
 
+# App logic
+
 
 def solve(mode, fileName, messageImage, message, outputName, bm):
-    #fileName = input("Enter original image name: ")
     if os.path.isfile(fileName):
         try:
             image = Image.open(fileName)
@@ -16,16 +17,14 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
     else:
         print('No such file or directory')
         sys.exit(1)
-    #mode = input("Type H for Hide/R for Read: ")
+    # select mode
     if mode == "H":
-        #message = input("Enter message to hide: ")
         res = ''.join(format(ord(i), '08b') for i in message)
         counter = 0
         for c in res:
             counter += 1
         if image.size[0]*image.size[1] > counter:
-            #print("Message can fit in the image!")
-            #outputName = input("Enter output name and format: ")
+            # Message can fit in the image
             if os.path.isfile(outputName):
                 print('File already exist')
                 sys.exit(1)
@@ -58,16 +57,13 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                                 elif(pixel[0] == 250):
                                     pixelMap[row, column] = (
                                         pixel[0]-1, pixel[1], pixel[2])
-                # image.show()
                 output_name_path = os.path.join('img', outputName)
                 image = image.save(output_name_path, quality=100)
         else:
-            #print('Message is too long \n Use bigger image or shorten the message')
             raise ValueError("Message is too long! Use bigger image!")
     else:
-        #messageImage = input("Enter second image name and format: ")
         if os.path.isfile(messageImage):
-            # print("Reading...")
+            # READ
             try:
                 secondImage = Image.open(messageImage)
             except:
@@ -97,6 +93,7 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                             column = column+1
                         else:
                             row = row+1
+            # Extracted binary message after compearing both images
             if bm == 'y' or bm == 'Yes' or bm == 'yes' or bm == 'Y':
                 print("Binary Message is: "+binaryMessage)
             n = int(binaryMessage, 2)
@@ -116,6 +113,7 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                     MessageWithSpace = MessageWithSpace+" "
                     count = 0
             binary_values = MessageWithSpace.split()
+            # Convert binary to text
             ascii_string = ""
             for binary_value in binary_values:
                 an_integer = int(binary_value, 2)
@@ -128,11 +126,13 @@ def solve(mode, fileName, messageImage, message, outputName, bm):
                 return output
             except:
                 print(ascii_string)
+                # in case of uknown characters
                 return(ascii_string)
         else:
             print('No such file or directory')
 
 
+# Console interfase with pyargparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Steganography')
     parser.add_argument('-m', '--mode', type=str,
