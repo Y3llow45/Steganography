@@ -25,9 +25,14 @@ This Steganography tool can help anyone in hiding sensitive information within i
 3. For maximum security, use different images for each message. Make sure these images are original, captured by you, and have not been uploaded anywhere, not even on your backup cloud. It's best to use images captured with your own camera insted of your phone unless you have taken serous privacy measures.
 
 ## Installation
+```
+Download and extract "Steganography exe.rar", open pyqt folder and run pyqt.exe
+```
+OR
 ```bash
 $ pip install -r requirements.txt --no-index
 ```
+
 ## Example - command line interface (CLI)
 ```console
 python hideRead.py -m R -oimg original.png -simg secrete.png -bm y
