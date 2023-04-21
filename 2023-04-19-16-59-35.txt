@@ -1,1 +1,0 @@
-the ultimate test msg_pattern = r'^[A-Za-z0-9 !@#$?%^|&;:*()_=+\-`\'~"\\{}\[\]<>.,/]+$'
