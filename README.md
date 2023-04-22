@@ -6,6 +6,8 @@
 
 This Steganography tool can help anyone in hiding sensitive information within images using a simple user interface.  The data is concealed and read using **LSB (least significant bit) steganography**, rendering it undetectable to the naked eye. Since no keys or passwords are required, this tool speeds the process of hiding information within an image **without compromising security**.
 
+<img src="https://user-images.githubusercontent.com/68009977/233767796-32de40ab-1f65-47d8-888c-90e4f83bd995.jpg" alt="lsb" width="500" height="300">
+
 ## Features
 1. Hide and extract sensitive information from images
 2. Modern and intuitive GUI for an enhanced user experience
