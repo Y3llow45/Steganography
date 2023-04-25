@@ -11,6 +11,7 @@ window_height = 500
 file_pattern = r"^[a-zA-Z0-9][a-zA-Z0-9_\-. ]*\.(png)$"
 # Do not allow symbols that are not here: `~!@#$%^&*()-_=+[{]}\|;:'",<.>/?
 msg_pattern = r'^[A-Za-z0-9 !@#$?%^|&;:*()_=+\-`\'~"\\{}\[\]<>.,/]+$'
+# don't match characters like: ╚╚Ї
 
 # Needs to be changed in both pyqt.py and hideRead.py
 READ_MODE = "R"
