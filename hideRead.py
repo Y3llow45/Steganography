@@ -1,163 +1,127 @@
-from PIL import Image
-import os.path
-import math
-import argparse
-import sys
+"""Hide and recover UTF-8 text by comparing two PNG images.
 
-# App logic
+A four-byte big-endian payload length precedes the message. Each bit uses one
+pixel: 0 leaves it unchanged and 1 changes the red channel by exactly one.
+The original image is required to decode the modified image.
+"""
+import argparse
+from pathlib import Path
+
+from PIL import Image
+
+HEADER_BYTES = 4
+
+
+def _bits(data):
+    for byte in data:
+        for shift in range(7, -1, -1):
+            yield (byte >> shift) & 1
+
+
+def _images(original, modified=None):
+    with Image.open(original) as source:
+        base = source.convert("RGBA" if source.mode == "RGBA" else "RGB")
+    if modified is None:
+        return base
+    with Image.open(modified) as other:
+        encoded = other.convert(base.mode)
+    if base.size != encoded.size:
+        raise ValueError("Images must have identical dimensions")
+    return base, encoded
+
+
+def _output_path(filename):
+    target = Path(filename)
+    if target.suffix.lower() != ".png":
+        raise ValueError("Output image must be a PNG (lossless)")
+    # Preserve the GUI's historical default output folder.
+    if target.parent == Path("."):
+        target = Path("img") / target
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.exists():
+        raise FileExistsError("Output image already exists: " + str(target))
+    return target
 
 
 def solve(mode, fileName, messageImage, message, outputName, bm):
-    if os.path.isfile(fileName):
-        try:
-            image = Image.open(fileName)
-        except Exception as e:
-            print("Failed to open the file")
-            sys.exit(1)
-    else:
-        print('No such file or directory')
-        sys.exit(1)
-    # select mode
+    """Keep the existing CLI/GUI interface: mode H=hide, R=read."""
     if mode == "H":
-        res = ''.join(format(ord(i), '08b') for i in message)
-        counter = 0
-        for c in res:
-            counter += 1
-        if image.size[0]*image.size[1] > counter:
-            # Message can fit in the image
-            if os.path.isfile(outputName):
-                print('File already exist')
-                sys.exit(1)
-            else:
-                print("Hidding...")
-                pixelMap = image.load()
-                row = 0
-                column = 0
-                for i in range(counter):
-                    if i == 0 and res[i] == "1":
-                        pixel = pixelMap[row, column]
-                        if(pixel[0] == 0):
-                            pixelMap[row, column] = (
-                                pixel[0]+1, pixel[1], pixel[2])
-                        elif(pixel[0] == 250):
-                            pixelMap[row, column] = (
-                                pixel[0]-1, pixel[1], pixel[2])
-                    else:
-                        if(i != 0):
-                            if row == image.size[0]-1:
-                                row = 0
-                                column = column+1
-                            else:
-                                row = row+1
-                            if res[i] == "1":
-                                pixel = pixelMap[row, column]
-                                if(pixel[0] == 0):
-                                    pixelMap[row, column] = (
-                                        pixel[0]+1, pixel[1], pixel[2])
-                                elif(pixel[0] == 250):
-                                    pixelMap[row, column] = (
-                                        pixel[0]-1, pixel[1], pixel[2])
-                output_name_path = os.path.join('img', outputName)
-                image = image.save(output_name_path, quality=100)
-        else:
-            raise ValueError("Message is too long! Use bigger image!")
-    else:
-        if os.path.isfile(messageImage):
-            # READ
-            try:
-                secondImage = Image.open(messageImage)
-            except:
-                print("Failed to open the file")
-                sys.exit(1)
-            secondMap = secondImage.load()
-            firstMap = image.load()
-            row = 0
-            column = 0
-            binaryMessage = ""
-            counterEnd = 0
-            if image.size[0] == secondImage.size[0] and image.size[1] == secondImage.size[1]:
-                for i in range(image.size[0]*image.size[1]):
-                    pixel = firstMap[row, column]
-                    pixel2 = secondMap[row, column]
-                    if(pixel[0] == pixel2[0] and pixel[1] == pixel2[1] and pixel[2] == pixel2[2]):
-                        binaryMessage += "0"
-                        counterEnd = counterEnd+1
-                    else:
-                        binaryMessage += "1"
-                        counterEnd = 0
-                    if counterEnd == 9:
-                        break
-                    else:
-                        if row == image.size[0]-1:
-                            row = 0
-                            column = column+1
-                        else:
-                            row = row+1
-            # Extracted binary message after compearing both images
-            if bm == 'y' or bm == 'Yes' or bm == 'yes' or bm == 'Y':
-                print("Binary Message is: "+binaryMessage)
-            n = int(binaryMessage, 2)
-            num = len(binaryMessage)/8
-            if num.is_integer():
-                binaryMessage = binaryMessage.rstrip(binaryMessage[-8])
-                loopNum = num-8
-            else:
-                loopNum = math.floor(num)
-            MessageWithSpace = ""
-            count = 0
-            loopNum = int(loopNum)
-            for o in range(loopNum*8):
-                MessageWithSpace = MessageWithSpace+binaryMessage[o]
-                count = count+1
-                if count == 8:
-                    MessageWithSpace = MessageWithSpace+" "
-                    count = 0
-            binary_values = MessageWithSpace.split()
-            # Convert binary to text
-            ascii_string = ""
-            for binary_value in binary_values:
-                an_integer = int(binary_value, 2)
-                ascii_character = chr(an_integer)
-                ascii_string += ascii_character
-            # print(binaryMessage)
-            try:
-                output = n.to_bytes((n.bit_length() + 7) // 8, 'big').decode()
-                print(output)
-                return output
-            except:
-                print(ascii_string)
-                # in case of uknown characters
-                return(ascii_string)
-        else:
-            print('No such file or directory')
+        if not message:
+            raise ValueError("Message cannot be empty")
+        image = _images(fileName)
+        payload = message.encode("utf-8")
+        if len(payload) >= 2 ** 32:
+            raise ValueError("Message is too large")
+        data = len(payload).to_bytes(HEADER_BYTES, "big") + payload
+        if len(data) * 8 > image.width * image.height:
+            raise ValueError("Message is too long! Use a bigger image.")
+        output = _output_path(outputName)
+        pixels = image.load()
+        for offset, bit in enumerate(_bits(data)):
+            if not bit:
+                continue
+            x, y = offset % image.width, offset // image.width
+            pixel = pixels[x, y]
+            red = pixel[0] + 1 if pixel[0] < 255 else pixel[0] - 1
+            pixels[x, y] = (red,) + pixel[1:]
+        image.save(output, format="PNG")
+        return str(output)
+
+    if mode == "R":
+        if not messageImage:
+            raise ValueError("Provide the encoded image")
+        original, encoded = _images(fileName, messageImage)
+        before, after = original.load(), encoded.load()
+        capacity = original.width * original.height
+        if capacity < HEADER_BYTES * 8:
+            raise ValueError("Image is too small to contain a message")
+
+        def changed(offset):
+            x, y = offset % original.width, offset // original.width
+            return int(before[x, y][0] != after[x, y][0])
+
+        def read_bytes(start, length):
+            result = bytearray()
+            for byte_index in range(length):
+                value = 0
+                for bit_index in range(8):
+                    value = (value << 1) | changed(start + byte_index * 8 + bit_index)
+                result.append(value)
+            return bytes(result)
+
+        size = int.from_bytes(read_bytes(0, HEADER_BYTES), "big")
+        if size == 0 or (HEADER_BYTES + size) * 8 > capacity:
+            raise ValueError("Invalid or missing message header (image may use the old format)")
+        data = read_bytes(HEADER_BYTES * 8, size)
+        try:
+            result = data.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError("Message is damaged or images do not match") from exc
+        if str(bm).strip().lower() in ("yes", "y"):
+            print("Binary Message is:", "".join(str(x) for x in _bits(data)))
+        print(result)
+        return result
+
+    raise ValueError("Mode must be H (hide) or R (read)")
 
 
-# Console interfase with pyargparse
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Steganography')
-    parser.add_argument('-m', '--mode', type=str,
-                        help='(R)Read and (H)Hide', required=True)
-    parser.add_argument('-oimg', '--original', type=str,
-                        help='name and format of the original image', required=True)
-    parser.add_argument('-simg', '--second', type=str,
-                        help='name and format of the second image')
-    parser.add_argument('-msg', '--message', type=str, help='message to hide')
-    parser.add_argument('-out', '--output', type=str,
-                        help='name and format of the output image')
-    parser.add_argument('-bm', '--binarymsg', type=str,
-                        help='show binary message after reading. y or n')
-
+    parser = argparse.ArgumentParser(description="PNG image steganography")
+    parser.add_argument("-m", "--mode", choices=["H", "R"], required=True)
+    parser.add_argument("-oimg", "--original", required=True)
+    parser.add_argument("-simg", "--second")
+    parser.add_argument("-msg", "--message")
+    parser.add_argument("-out", "--output")
+    parser.add_argument("-bm", "--binarymsg", default="n")
     args = parser.parse_args()
+    if args.mode == "H" and (not args.message or not args.output):
+        parser.error("H requires -msg and -out")
+    if args.mode == "R" and not args.second:
+        parser.error("R requires -simg")
+    try:
+        solve(args.mode, args.original, args.second, args.message, args.output, args.binarymsg)
+    except (OSError, ValueError) as exc:
+        parser.error(str(exc))
 
-    if args.mode != "H" and args.mode != "R":
-        print("Mode doesn't exist. Use -m R or -m H")
-    elif args.mode == "H" and (args.original is None or args.message is None or args.output is None):
-        print(
-            "Specify (-oimg) original image, (-msg) message to hide and (-out) output image")
-    elif args.mode == "R" and (args.original is None or args.second is None):
-        print("Specify (-oimg) original image and (-simg) second image")
-    else:
-        solve(args.mode, args.original, args.second,
-              args.message, args.output, args.binarymsg)
 
-__all__ = ['solve']
+__all__ = ["solve"]
